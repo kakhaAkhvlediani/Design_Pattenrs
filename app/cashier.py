@@ -15,3 +15,6 @@ class ICashier(Protocol):
 
     def make_z_report(self):
         pass
+
+    def give_receipt(self):
+        pass
