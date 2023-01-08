@@ -11,3 +11,8 @@ pytest-cov
 pytest-recording
 hypothesis
 faker
+
+pillow
+
+uvicorn
+fastapi
