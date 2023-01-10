@@ -50,9 +50,9 @@ class Item:
         if not isinstance(other, Item):
             return NotImplemented
         return (
-                self.get_name() == other.get_name()
-                and self.get_count() == other.get_count()
-                and self.get_price() == other.get_price()
+            self.get_name() == other.get_name()
+            and self.get_count() == other.get_count()
+            and self.get_price() == other.get_price()
         )
 
     def __hash__(self) -> int:
@@ -203,10 +203,7 @@ class ReceiptInteractor:
             return ReceiptResponse(status=404)
         else:
             receipt = self._current_receipt.build().get_receipt()
-            return ReceiptResponse(
-                status=200,
-                receipt=receipt
-            )
+            return ReceiptResponse(status=200, receipt=receipt)
 
     def close_receipt(self) -> ReceiptResponse:
         if self._current_receipt is None:

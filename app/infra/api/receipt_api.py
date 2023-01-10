@@ -20,10 +20,10 @@ def get_receipt(core: StoreServiceCore = Depends(get_core)) -> ReceiptResponse:
 
 @receipt_api.post("/receipts/add_item/{item_name}")
 def add_item(
-        name: str,
-        count: int,
-        price: float,
-        core: StoreServiceCore = Depends(get_core),
+    name: str,
+    count: int,
+    price: float,
+    core: StoreServiceCore = Depends(get_core),
 ) -> ReceiptResponse:
     return core.add_item(request=AddItemRequest(name, count, price))
 
