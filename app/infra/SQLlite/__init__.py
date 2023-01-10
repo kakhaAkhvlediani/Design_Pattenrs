@@ -9,7 +9,6 @@ from app.core.receipt.interactor import IItem, IReceipt, Item
 class SQLiteStoreRepository:
     def __init__(self) -> None:
         self._database_name = "store.db"
-        self._number_of_receipts = 0
 
         with database.connect(self._database_name) as conn:
             cursor = conn.cursor()
@@ -24,6 +23,8 @@ class SQLiteStoreRepository:
                     );"""
             )
 
+            self._number_of_receipts = self._find_id_of_latest_receipt()
+
     def add_closed_receipt(self, receipt: IReceipt) -> None:
         self._number_of_receipts += 1
 
@@ -31,7 +32,18 @@ class SQLiteStoreRepository:
             cursor = conn.cursor()
 
             for item in receipt:
-                self._add_sold_item(item, self._number_of_receipts, cursor)
+                receipt_id: int = self._number_of_receipts
+                command = """ INSERT INTO sold_items
+                                (name, count, price, receipt_id)
+                                VALUES(?,?,?,?) """
+                data = (
+                    item.get_name(),
+                    item.get_count(),
+                    item.get_price(),
+                    receipt_id,
+                )
+
+                cursor.execute(command, data)
 
             conn.commit()
 
@@ -66,15 +78,19 @@ class SQLiteStoreRepository:
     def get_receipt_count(self) -> int:
         return self._number_of_receipts
 
-    def _add_sold_item(self, item: IItem, receipt_id: int, cursor: Cursor) -> None:
-        command = """ INSERT INTO sold_items
-                        (name, count, price, receipt_id)
-                        VALUES(?,?,?,?) """
-        data = (
-            item.get_name(),
-            item.get_count(),
-            item.get_price(),
-            receipt_id,
-        )
+    def _find_id_of_latest_receipt(self) -> int:
+        max_id = -1
 
-        cursor.execute(command, data)
+        with database.connect(self._database_name) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT max(receipt_id) FROM sold_items")
+
+            row = cursor.fetchone()
+
+            if row[0] is not None:
+                max_id = row[0]
+
+        if max_id == -1:
+            max_id = 0
+
+        return max_id

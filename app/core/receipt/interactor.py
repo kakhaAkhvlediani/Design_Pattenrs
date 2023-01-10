@@ -213,8 +213,8 @@ class ReceiptInteractor:
             return ReceiptResponse(status=404)
         else:
             receipt = self._current_receipt.build()
+            self._current_receipt = None
 
             self._database.add_closed_receipt(receipt)
-            self._current_receipt = None
 
             return ReceiptResponse(status=200)

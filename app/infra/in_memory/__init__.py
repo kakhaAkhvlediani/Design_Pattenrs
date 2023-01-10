@@ -12,12 +12,9 @@ class InMemoryRepository:
         self._sold_items = defaultdict(int)
         self._closed_receipts = 0
 
-    def _add_sold_item(self, item: IItem) -> None:
-        self._sold_items[item] += 1
-
     def add_closed_receipt(self, receipt: IReceipt) -> None:
         for item in receipt:
-            self._add_sold_item(item)
+            self._sold_items[item] += 1
 
         self._closed_receipts += 1
 
